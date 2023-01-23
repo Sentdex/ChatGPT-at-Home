@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>ChatGPT @ Home</title>
+        <!-- Include Materialize CSS -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+        <!-- Custom CSS -->
+        <style>
+            /* Style for even-indexed messages */
+            .even {
+                background-color: #f5f5f5;
+                padding: 10px;
+                margin: 20px;
+                border-radius: 10px;
+            }
+
+            /* Style for odd-indexed messages */
+            .odd {
+                background-color: #b0e3e3;
+                padding: 10px;
+                margin: 20px;
+                border-radius: 10px;
+            }
+
+            button#reset-button {
+                background-color: #e0e0e0;
+                color: black;
+            }
+        </style>
+    </head>
+<body>
+    <div class="container">
+        <h1>ChatGPT @ Home</h1>
+        {% if history %}
+        <!-- Chat history -->
+        <div id="history" class="card">
+            <div class="card-content">
+                {% for message in history[1:] %} 
+                    <div class="card {% if loop.index % 2 == 0 %}even{% else %}odd{% endif %}">
+                        <p>{{ message }}</p>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+        
+            <!-- Chat form -->
+            <form id="chat-form" method="post" class="input-field">
+                <textarea id="input-text" name="input_text"></textarea>
+                <button type="submit" class="btn">Send</button>
+            </form>
+
+            <!-- Reset button -->
+            <button id="reset-button" type="submit" class="btn" form="reset-form">Reset</button>
+
+            <!-- Reset form -->
+            <form id="reset-form" method="post" action="/reset">
+            </form>
+        {% endif %}
+    </div>
+</body>
+</html>
