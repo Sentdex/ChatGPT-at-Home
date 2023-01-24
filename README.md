@@ -4,4 +4,4 @@ ChatGPT @ Home: Large Language Model (LLM) chatbot application, written by ChatG
 I asked ChatGPT to build an LLM-based chatbot app and this was the result. 
 
 
-![ChatGPT@home demo](https://pythonprogramming.net/static/images/chatgptathomedemogithub.png)
+![ChatGPT@home demo](https://pythonprogramming.net/static/images/chatgptathomedemogithub2.png)
