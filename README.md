@@ -6,7 +6,7 @@ I asked ChatGPT to build an LLM-based chatbot app and this was the result.
 <img src="https://pythonprogramming.net/static/images/chatgptathomesocial.png" width="512"/>
 
 ### Running float-16 and 8 bit across multiple GPU's
-Hugging face accelerate lets you run LLM's over multiple models,
+Hugging face accelerate lets you run LLM's over multiple GPU's,
 For half precission across multiple gpus accelerate is only needed.
 
 Install hugging face [accelerate](https://huggingface.co/docs/accelerate/v0.3.0/installation.html)
