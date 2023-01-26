@@ -12,6 +12,8 @@
                 padding: 10px;
                 margin: 20px;
                 border-radius: 10px;
+                float: left;
+                width: calc(100% / 12 * 8);
             }
 
             /* Style for odd-indexed messages */
@@ -20,6 +22,8 @@
                 padding: 10px;
                 margin: 20px;
                 border-radius: 10px;
+                float: right;
+                width: calc(100% / 12 * 8);
             }
 
             button#reset-button {
@@ -34,7 +38,7 @@
         {% if history %}
         <!-- Chat history -->
         <div id="history" class="card">
-            <div class="card-content">
+            <div class="card-content" style="overflow: auto">
                 {% for message in history[1:] %} 
                     <div class="card {% if loop.index % 2 == 0 %}even{% else %}odd{% endif %}">
                         <p>{{ message }}</p>
