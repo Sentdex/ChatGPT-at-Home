@@ -1,61 +1,131 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>ChatGPT @ Home</title>
-        <!-- Include Materialize CSS -->
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
-        <!-- Custom CSS -->
-        <style>
-            /* Style for even-indexed messages */
-            .even {
-                background-color: #f5f5f5;
-                padding: 10px;
-                margin: 20px;
-                border-radius: 10px;
-            }
+<head>
+    <title>ChatGPT @ Home</title>
+    <!-- Include Materialize CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <!-- Custom CSS -->
+    <style>
+        /* Style for even-indexed messages */
+        .even {
+            background-color: #f5f5f5;
+            padding: 10px;
+            margin: 20px;
+            border-radius: 10px;
+        }
 
-            /* Style for odd-indexed messages */
-            .odd {
-                background-color: #b0e3e3;
-                padding: 10px;
-                margin: 20px;
-                border-radius: 10px;
-            }
+        /* Style for odd-indexed messages */
+        .odd {
+            background-color: #b0e3e3;
+            padding: 10px;
+            margin: 20px;
+            border-radius: 10px;
+        }
 
-            button#reset-button {
-                background-color: #e0e0e0;
-                color: black;
-            }
-        </style>
-    </head>
+        button#reset-button {
+            background-color: #e0e0e0;
+            color: black;
+        }
+    </style>
+</head>
 <body>
     <div class="container">
         <h1>ChatGPT @ Home</h1>
         {% if history %}
         <!-- Chat history -->
         <div id="history" class="card">
-            <div class="card-content">
+            <div class="card-content" id="chat-content">
                 {% for message in history[1:] %} 
-                    <div class="card {% if loop.index % 2 == 0 %}even{% else %}odd{% endif %}">
-                        <p>{{ message }}</p>
-                    </div>
+                <div class="card {% if loop.index % 2 == 0 %}even{% else %}odd{% endif %}">
+                    <p>{{ message }}</p>
+                </div>
                 {% endfor %}
             </div>
         </div>
         
-            <!-- Chat form -->
-            <form id="chat-form" method="post" class="input-field">
-                <textarea id="input-text" name="input_text"></textarea>
-                <button type="submit" class="btn">Send</button>
-            </form>
+        <!-- Chat form -->
+        <form id="chat-form" method="post" class="input-field">
+            <textarea id="input-text" name="input_text" placeholder="Enter your message"></textarea>
+            <button type="submit" class="btn">Send</button>
+        </form>
 
-            <!-- Reset button -->
-            <button id="reset-button" type="submit" class="btn" form="reset-form">Reset</button>
+        <!-- Reset button -->
+        <button id="reset-button" type="submit" class="btn" form="reset-form">Reset</button>
 
-            <!-- Reset form -->
-            <form id="reset-form" method="post" action="/reset">
-            </form>
+        <!-- Reset form -->
+        <form id="reset-form" method="post" action="/reset">
+        </form>
         {% endif %}
     </div>
+
+    <!-- Include Materialize JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+
+    <!-- Custom JS -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+    // Auto-scroll to bottom of chat window
+            var chatContent = document.getElementById('chat-content');
+            chatContent.scrollTop = chatContent.scrollHeight;
+
+    // Hide placeholder text when user starts typing
+            var inputText = document.getElementById('input-text');
+            inputText.addEventListener('input', function() {
+                if (inputText.value.trim() !== '') {
+                    inputText.removeAttribute('placeholder');
+                }
+            });
+
+    // Submit text on 'Enter' key press
+            var chatForm = document.getElementById('chat-form');
+            inputText.addEventListener('keydown', function(event) {
+                if (event.keyCode === 13) {
+                    event.preventDefault();
+                    chatForm.submit();
+                }
+            });
+
+    // Scroll to bottom of chat window after new message is sent
+            chatForm.addEventListener('submit', function() {
+                var chatContent = document.getElementById('chat-content');
+                chatContent.scrollTop = chatContent.scrollHeight;
+
+        // Send text input to server
+                var xhr = new XMLHttpRequest();
+                xhr.open('POST', '/');
+                xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+                xhr.onload = function() {
+                    if (xhr.status === 200) {
+                        var response = JSON.parse(xhr.responseText);
+                        var botMessage = response.message;
+
+                // Add bot's response to chat history
+                        var chatContent = document.getElementById('chat-content');
+                        var newMessage = document.createElement('div');
+                        newMessage.classList.add('card');
+                        newMessage.classList.add('odd');
+                        var messageText = document.createElement('p');
+                        messageText.innerText = botMessage;
+                        newMessage.appendChild(messageText);
+                        chatContent.appendChild(newMessage);
+
+                // Clear input field and add placeholder text
+                        inputText.value = '';
+                        inputText.setAttribute('placeholder', 'Enter your message');
+
+                // Select input field and set focus
+                        inputText.focus();
+                    } else {
+                        console.log('Request failed.  Returned status of ' + xhr.status);
+                    }
+                };
+                xhr.send(encodeURI('input_text=' + inputText.value));
+            });
+
+    // Select input field and set focus
+            inputText.focus();
+        });
+
+    </script>
 </body>
 </html>
